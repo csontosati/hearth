@@ -1,0 +1,28 @@
+# Qodo (PR-Agent) Configuration for Hearth
+# Configures automated code review, PR descriptions, and quality gate inspection.
+
+[pr_reviewer]
+# Require score and focus on architectural and canvas integrity
+require_score_review = true
+require_tests_review = true
+enable_help_text = false
+extra_instructions = """
+In Hearth:
+1. Ensure the simulation/rendering loop stays strictly decoupled from external network/API integrations.
+2. Verify that canvas operations avoid memory leaks (proper cleanup of timers, event listeners, and particle arrays).
+3. Validate TypeScript type safety and check that any state changes in WorldState are covered by unit tests.
+4. Keep the 16-bit retro pixel aesthetics and domain model clean and maintainable.
+"""
+
+[pr_description]
+publish_labels = true
+final_update_message = true
+
+[pr_code_suggestions]
+num_code_suggestions_per_chunk = 3
+rank_suggestions = true
+
+[config]
+model = "gpt-4o"
+fallback_models = ["claude-3-5-sonnet", "gemini-1.5-pro"]
+

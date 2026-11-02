@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hearth — Cozy AI Agent Sanctuary</title>
+    <!-- Retro 16-Bit Pixel Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <div class="brand">
+          <span class="icon">🏕️</span>
+          <h1>HEARTH</h1>
+          <span class="badge">DAY 1</span>
+        </div>
+        <div class="weather-pill" id="weather-display">
+          <span id="weather-icon">☀️</span>
+          <span id="weather-text">LOCAL: FETCHING...</span>
+        </div>
+      </header>
+
+      <main class="viewport-container">
+        <canvas id="game-canvas" width="800" height="540"></canvas>
+
+        <div class="hud-overlay">
+          <div class="hud-card soundtrack-card">
+            <div class="card-label">♪ SOUND TEST (WEATHER SYNC)</div>
+            <div class="track-title" id="track-title">LOADING TUNE...</div>
+            <a id="yt-search-btn" class="yt-link" target="_blank" rel="noopener noreferrer">
+              [► OPEN STREAM ON YOUTUBE]
+            </a>
+          </div>
+
+          <div class="hud-card controls-card">
+            <div class="card-label">⚡ DISPATCH AGENT QUEST</div>
+            <div class="button-row">
+              <button id="btn-scout" class="action-btn">🧭 SCOUT</button>
+              <button id="btn-smith" class="action-btn">🔨 SMITH</button>
+              <button id="btn-scribe" class="action-btn">📜 SCRIBE</button>
+              <button id="btn-bard" class="action-btn">🪕 BARD</button>
+              <button id="btn-weather-toggle" class="action-btn secondary">🌧️ WEATHER</button>
+            </div>
+            <div class="hint-text">SELECT AGENT OR CLICK GROUND TO WALK</div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
