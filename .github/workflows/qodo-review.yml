@@ -1,0 +1,27 @@
+name: Qodo AI Code Review
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+  issue_comment:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  qodo_review:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && !github.event.pull_request.draft }}
+    steps:
+      - name: Run Qodo PR Agent Review
+        uses: Codium-ai/pr-agent@main
+        env:
+          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "true"
+

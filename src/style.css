@@ -1,0 +1,286 @@
+:root {
+  font-family: 'Silkscreen', 'Press Start 2P', monospace;
+  color: #f1ebd9;
+  background-color: #0f0a07;
+  image-rendering: pixelated;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+/* Retro Dungeon Stone / Tavern Plank Background */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #120c08;
+  background-image: 
+    linear-gradient(45deg, #1a120c 25%, transparent 25%),
+    linear-gradient(-45deg, #1a120c 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1a120c 75%),
+    linear-gradient(-45deg, transparent 75%, #1a120c 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  overflow-x: hidden;
+  padding: 20px 0;
+}
+
+#app {
+  width: 864px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   16-BIT RETRO RPG DIALOGUE BOX / FRAME (SNES & JRPG AESTHETIC)
+   ───────────────────────────────────────────────────────────── */
+.retro-frame,
+.app-header,
+.hud-card {
+  background-color: #231710;
+  border: 4px solid #100a06;
+  outline: 2px solid #caa049;
+  box-shadow: 
+    inset 2px 2px 0px #e6c875,
+    inset -2px -2px 0px #5c3e14,
+    4px 4px 0px #000000;
+  border-radius: 0px;
+}
+
+/* Top Navigation / Title Banner */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background-color: #2b1d14;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand .icon {
+  font-size: 20px;
+  filter: drop-shadow(2px 2px 0px #000);
+}
+
+.brand h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 15px;
+  color: #ffd768;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0px #000, -1px -1px 0px #634311;
+}
+
+.badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  background: #9b2c2c;
+  color: #fff5f5;
+  padding: 4px 6px;
+  border: 2px solid #581818;
+  box-shadow: inset 1px 1px 0px #f87171, inset -1px -1px 0px #320d0d;
+}
+
+/* Weather Status Slot */
+.weather-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #18110b;
+  padding: 8px 12px;
+  border: 2px solid #4a341e;
+  box-shadow: inset 1px 1px 0px #000, 1px 1px 0px #634b2a;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #93c5fd;
+  text-shadow: 1px 1px 0px #000;
+}
+
+#weather-icon {
+  font-size: 14px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CANVAS GAME CABINET / BEZEL
+   ───────────────────────────────────────────────────────────── */
+.viewport-container {
+  position: relative;
+  width: 808px;
+  height: 548px;
+  margin: 0 auto;
+  border: 4px solid #140d08;
+  outline: 3px solid #b88628;
+  box-shadow: 
+    inset 3px 3px 0px #ebd48e,
+    inset -3px -3px 0px #5c3e14,
+    0 8px 0px #000000,
+    0 12px 24px rgba(0, 0, 0, 0.7);
+  background-color: #3b6332;
+  overflow: hidden;
+}
+
+#game-canvas {
+  display: block;
+  width: 800px;
+  height: 540px;
+  image-rendering: pixelated;
+  cursor: crosshair;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   HUD CARDS & CONTROLS (SNES MENU OVERLAY)
+   ───────────────────────────────────────────────────────────── */
+.hud-overlay {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.hud-card {
+  pointer-events: auto;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.soundtrack-card {
+  flex: 1;
+  max-width: 330px;
+}
+
+.controls-card {
+  flex: 1;
+  max-width: 440px;
+}
+
+.card-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: #cca660;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.track-title {
+  font-family: 'Silkscreen', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fef08a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.yt-link {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7.5px;
+  color: #60a5fa;
+  text-decoration: none;
+  margin-top: 3px;
+  text-shadow: 1px 1px 0px #000;
+  display: inline-block;
+  transition: color 0.1s;
+}
+
+.yt-link:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TACTILE 16-BIT RETRO CHUNKY BUTTONS
+   ───────────────────────────────────────────────────────────── */
+.button-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8.5px;
+  background-color: #3b5e8c;
+  color: #ffffff;
+  border: 2px solid #141c26;
+  box-shadow: 
+    inset 2px 2px 0px #6ba4e8,
+    inset -2px -2px 0px #1e3350,
+    0 2px 0px #000000;
+  padding: 6px 8px;
+  cursor: pointer;
+  text-shadow: 1px 1px 0px #000;
+  border-radius: 0px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.action-btn:hover {
+  background-color: #4c77b0;
+  box-shadow: 
+    inset 2px 2px 0px #8bbdfc,
+    inset -2px -2px 0px #1e3350,
+    0 2px 0px #000000;
+}
+
+.action-btn:active {
+  transform: translateY(2px);
+  box-shadow: 
+    inset -2px -2px 0px #8bbdfc,
+    inset 2px 2px 0px #1e3350,
+    0 0px 0px #000000;
+}
+
+.action-btn.secondary {
+  background-color: #634324;
+  box-shadow: 
+    inset 2px 2px 0px #a87648,
+    inset -2px -2px 0px #382412,
+    0 2px 0px #000000;
+}
+
+.action-btn.secondary:hover {
+  background-color: #7d552f;
+  box-shadow: 
+    inset 2px 2px 0px #c78d59,
+    inset -2px -2px 0px #382412,
+    0 2px 0px #000000;
+}
+
+.action-btn.secondary:active {
+  transform: translateY(2px);
+  box-shadow: 
+    inset -2px -2px 0px #c78d59,
+    inset 2px 2px 0px #382412,
+    0 0px 0px #000000;
+}
+
+.hint-text {
+  font-family: 'Silkscreen', monospace;
+  font-size: 9px;
+  color: #a89478;
+  letter-spacing: 0.2px;
+  text-shadow: 1px 1px 0px #000;
+  margin-top: 2px;
+}
