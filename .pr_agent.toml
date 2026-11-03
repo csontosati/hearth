@@ -7,11 +7,12 @@ require_score_review = true
 require_tests_review = true
 enable_help_text = false
 extra_instructions = """
-In Hearth:
-1. Ensure the simulation/rendering loop stays strictly decoupled from external network/API integrations.
-2. Verify that canvas operations avoid memory leaks (proper cleanup of timers, event listeners, and particle arrays).
-3. Validate TypeScript type safety and check that any state changes in WorldState are covered by unit tests.
-4. Keep the 16-bit retro pixel aesthetics and domain model clean and maintainable.
+In Hearth, enforce the review standards defined in AGENTS.md:
+1. Rule 1 (The No Invisible Feathers Rule): In ASCII sprite definitions (src/render/pixel/**), ensure every row is exactly 16 characters wide and all glyphs exist in the character's palette dictionary.
+2. Rule 2 (The Clean Sanctuary Loop Rule): Ensure WorldState and renderers never perform direct network fetch/async calls; all I/O belongs in decoupled providers.
+3. Rule 3 (The No Ghost Callbacks Rule): Verify that timers, event listeners, and particle arrays have explicit lifecycle teardown (disconnect/destroy).
+4. Rule 4 (The 16-Bit Atmosphere Rule): Reject modern smooth web styles; enforce CSS theme tokens, pixelated fonts, and pixel-rendering.
+5. Rule 5 (The Forge Verification Gate): Require zero TypeScript 'any' escapes and verify all state transitions have matching Vitest unit tests.
 """
 
 [pr_description]
