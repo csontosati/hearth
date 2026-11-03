@@ -157,6 +157,7 @@ export const BARD = buildCharacter({
     X: '#f4d03f',
     x: '#fef5b8',
     h: '#e5be26',
+    F: '#dc2626', // Crimson feather in bard's traveling cap
     Y: '#8e44ad',
     c: '#9b59b6',
     C: '#6c3483',
@@ -167,7 +168,7 @@ export const BARD = buildCharacter({
   },
   overrides: {
     2: '..kXXXxxxFXXXk..',
-    3: '.kXXxxXXFFFXXk.',
+    3: '.kXXxxXXFFFXXXk.',
     12: '.kYYccaaccaaYYk.',
   },
 });
@@ -192,8 +193,8 @@ export const KNIGHT = buildCharacter({
   },
   overrides: {
     6: 'kXhhhhvvvvhhhhXk',
-    7: 'kXssssvvvvssssSXk',
-    8: 'kXssssvvvvssssSXk',
+    7: 'kXssssvvvvsssSXk',
+    8: 'kXssssvvvvsssSXk',
     13: 'kYYccccaaccaCYYk',
   },
 });
