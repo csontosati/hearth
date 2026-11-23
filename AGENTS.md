@@ -65,3 +65,17 @@ All pull requests and agent edits must pass `npm test` (Vitest unit tests) and `
 
 **Why this exists:** When coding agents generate or adjust web UI, they almost universally default to modern SaaS conventions: smooth border radii, blurred translucent cards, modern sans-serif fonts, and ad-hoc hex colors. In Hearth, the entire value proposition is delivering an authentic 16-bit retro RPG sanctuary that feels like an SNES or Game Boy Advance classic. A single smooth rounded button or blurry drop shadow breaks visual immersion. This rule establishes our design token palette (`--parchment`, `--wood-dark`, `--gold-trim`) and bitmap font constraints as non-negotiable boundaries across all styling and markup.
 
+## Quality gate and definition of done
+
+All coding tasks and pull requests must satisfy this quality gate before an agent may report the task as complete:
+
+- **Must fix (blocking):** Every valid **High** and **Medium** finding across all categories (Bugs, Rule violations, Requirement gaps). After fixing, rerun `npm test`, `npm run build`, and review on the updated commit.
+- **Flag for human attention (non-blocking):** All **Low** findings. Do not silently ignore them; list each Low finding in the final report for maintainer judgment.
+- **Disagreements:** Any High or Medium finding the agent believes is invalid must be backed by explicit file paths, line numbers, and test/runtime evidence.
+- **Stop and escalate (report as NOT DONE):**
+  - Any valid High or Medium finding remains unresolved.
+  - `npm test` or `npm run build` fails or is incomplete.
+  - The fix-and-review loop stalls (no progress after 2 retry iterations).
+  - The latest PR head commit has not received a completed review.
+
+
