@@ -1,8 +1,8 @@
-import { LocalBridgeAgentProvider } from './architecture/AgentProvider';
+import { AiAgentProvider } from './architecture/AiAgentProvider';
 import { WeatherService } from './architecture/WeatherService';
 import { WorldState } from './architecture/WorldState';
 import { PixelRenderer } from './render/PixelRenderer';
-import type { WeatherCondition } from './architecture/types';
+import type { AgentRole, AiProviderId, WeatherCondition } from './architecture/types';
 
 async function bootstrap() {
   const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -13,12 +13,17 @@ async function bootstrap() {
 
   const world = new WorldState(initialWeather);
   const renderer = new PixelRenderer(canvas);
-  const agentProvider = new LocalBridgeAgentProvider();
+  const agentProvider = new AiAgentProvider();
   await agentProvider.connect();
 
-  // Wire agent events into world state
+  const guildLogEl = document.getElementById('guild-log');
+
+  // Wire agent events into world state and HUD log
   agentProvider.onEvent((event) => {
     world.handleAgentEvent(event);
+    if (guildLogEl) {
+      guildLogEl.textContent = `[${event.role.toUpperCase()}] ${event.message}`;
+    }
   });
 
   // UI Elements
@@ -74,41 +79,103 @@ async function bootstrap() {
     world.setAgentTarget(selectedAgentId, { x: clickX, y: clickY });
   });
 
+  const promptInputEl = document.getElementById('quest-prompt-input') as HTMLInputElement | null;
+
+  function dispatchCharacterQuest(role: AgentRole, defaultPrompt: string) {
+    const customPrompt = promptInputEl?.value.trim();
+    const prompt = customPrompt || defaultPrompt;
+    const boundProvider = agentProvider.getBoundProvider(role);
+    void agentProvider.dispatchTask({
+      taskId: `task_${Date.now()}`,
+      role,
+      prompt,
+      sourceProvider: boundProvider,
+    });
+  }
+
   // Button handlers
   document.getElementById('btn-scout')?.addEventListener('click', () => {
-    agentProvider.dispatchTask({
-      taskId: `task_${Date.now()}`,
-      role: 'scout',
-      prompt: 'Scouting web for trending agent models',
-      sourceProvider: 'antigravity',
-    });
+    dispatchCharacterQuest('scout', 'Scouting web for trending AI agent tools');
   });
 
   document.getElementById('btn-smith')?.addEventListener('click', () => {
-    agentProvider.dispatchTask({
-      taskId: `task_${Date.now()}`,
-      role: 'blacksmith',
-      prompt: 'Refactoring test suites & running Qodo review',
-      sourceProvider: 'cursor',
-    });
+    dispatchCharacterQuest('blacksmith', 'Reviewing test suites & build health');
   });
 
   document.getElementById('btn-scribe')?.addEventListener('click', () => {
-    agentProvider.dispatchTask({
-      taskId: `task_${Date.now()}`,
-      role: 'scribe',
-      prompt: 'Updating project roadmap & daily architecture logs',
-      sourceProvider: 'openai',
-    });
+    dispatchCharacterQuest('scribe', 'Drafting today’s concise architecture notes');
   });
 
   document.getElementById('btn-bard')?.addEventListener('click', () => {
-    agentProvider.dispatchTask({
-      taskId: `task_${Date.now()}`,
-      role: 'bard',
-      prompt: 'Composing a lively acoustic tavern melody',
-      sourceProvider: 'local',
-    });
+    dispatchCharacterQuest('bard', 'Composing a cozy 16-bit campfire ballad');
+  });
+
+  // AI Accounts & Character Bindings Modal
+  const aiModal = document.getElementById('ai-modal');
+  const keyInputs: Record<'gemini' | 'openai' | 'anthropic', HTMLInputElement | null> = {
+    gemini: document.getElementById('key-gemini') as HTMLInputElement | null,
+    openai: document.getElementById('key-openai') as HTMLInputElement | null,
+    anthropic: document.getElementById('key-anthropic') as HTMLInputElement | null,
+  };
+  const modelInputs: Record<'gemini' | 'openai' | 'anthropic', HTMLInputElement | null> = {
+    gemini: document.getElementById('model-gemini') as HTMLInputElement | null,
+    openai: document.getElementById('model-openai') as HTMLInputElement | null,
+    anthropic: document.getElementById('model-anthropic') as HTMLInputElement | null,
+  };
+  const bindingSelects: Record<'scout' | 'blacksmith' | 'scribe' | 'bard', HTMLSelectElement | null> = {
+    scout: document.getElementById('bind-scout') as HTMLSelectElement | null,
+    blacksmith: document.getElementById('bind-blacksmith') as HTMLSelectElement | null,
+    scribe: document.getElementById('bind-scribe') as HTMLSelectElement | null,
+    bard: document.getElementById('bind-bard') as HTMLSelectElement | null,
+  };
+
+  function syncModalFromProvider() {
+    const configs = agentProvider.getConfigs();
+    for (const id of ['gemini', 'openai', 'anthropic'] as const) {
+      if (keyInputs[id]) keyInputs[id]!.value = configs[id].apiKey;
+      if (modelInputs[id]) modelInputs[id]!.value = configs[id].model;
+    }
+    const bindings = agentProvider.getBindings();
+    for (const role of ['scout', 'blacksmith', 'scribe', 'bard'] as const) {
+      if (bindingSelects[role]) bindingSelects[role]!.value = bindings[role];
+    }
+  }
+
+  document.getElementById('btn-ai-accounts')?.addEventListener('click', () => {
+    syncModalFromProvider();
+    aiModal?.classList.remove('hidden');
+  });
+
+  document.getElementById('btn-close-ai-modal')?.addEventListener('click', () => {
+    aiModal?.classList.add('hidden');
+  });
+
+  document.getElementById('btn-save-ai')?.addEventListener('click', () => {
+    for (const id of ['gemini', 'openai', 'anthropic'] as const) {
+      agentProvider.setProviderConfig(
+        id,
+        keyInputs[id]?.value ?? '',
+        modelInputs[id]?.value ?? ''
+      );
+    }
+    for (const role of ['scout', 'blacksmith', 'scribe', 'bard'] as const) {
+      const val = (bindingSelects[role]?.value ?? 'local') as AiProviderId;
+      agentProvider.setCharacterBinding(role, val);
+    }
+    if (guildLogEl) {
+      guildLogEl.textContent = 'SAVED AI ACCOUNTS & CHARACTER BINDINGS LOCALLY.';
+    }
+    aiModal?.classList.add('hidden');
+  });
+
+  document.getElementById('btn-clear-ai')?.addEventListener('click', () => {
+    for (const id of ['gemini', 'openai', 'anthropic'] as const) {
+      agentProvider.setProviderConfig(id, '');
+      if (keyInputs[id]) keyInputs[id]!.value = '';
+    }
+    if (guildLogEl) {
+      guildLogEl.textContent = 'CLEARED STORED API KEYS (USING LOCAL SIM FALLBACK).';
+    }
   });
 
   document.getElementById('btn-weather-toggle')?.addEventListener('click', () => {

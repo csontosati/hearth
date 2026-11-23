@@ -284,3 +284,108 @@ body {
   text-shadow: 1px 1px 0px #000;
   margin-top: 2px;
 }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.prompt-row {
+  margin-bottom: 6px;
+}
+
+.retro-input,
+.retro-select {
+  width: 100%;
+  font-family: 'Silkscreen', monospace;
+  font-size: 10px;
+  background-color: #18110b;
+  color: #f1ebd9;
+  border: 2px solid #4a341e;
+  border-radius: 0px;
+  padding: 6px 8px;
+  outline: none;
+  user-select: text;
+}
+
+.retro-input:focus,
+.retro-select:focus {
+  border-color: #caa049;
+}
+
+.guild-log {
+  margin-top: 6px;
+  padding: 5px 8px;
+  background-color: #18110b;
+  border: 2px solid #4a341e;
+  font-family: 'Silkscreen', monospace;
+  font-size: 9px;
+  color: #ebd48e;
+  max-height: 44px;
+  overflow-y: auto;
+  user-select: text;
+}
+
+.retro-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(10, 6, 4, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.retro-modal.hidden {
+  display: none;
+}
+
+.modal-panel {
+  width: 680px;
+  max-width: 94vw;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-header h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #ffd768;
+  text-shadow: 2px 2px 0px #000;
+}
+
+.modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background-color: #18110b;
+  border: 2px solid #4a341e;
+}
+
+.provider-grid,
+.binding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #caa049;
+}

@@ -17,11 +17,14 @@
         <div class="brand">
           <span class="icon">🏕️</span>
           <h1>HEARTH</h1>
-          <span class="badge">DAY 1</span>
+          <span class="badge">AI GUILD</span>
         </div>
-        <div class="weather-pill" id="weather-display">
-          <span id="weather-icon">☀️</span>
-          <span id="weather-text">LOCAL: FETCHING...</span>
+        <div class="header-actions">
+          <button id="btn-ai-accounts" class="action-btn secondary">🔌 AI ACCOUNTS</button>
+          <div class="weather-pill" id="weather-display">
+            <span id="weather-icon">☀️</span>
+            <span id="weather-text">LOCAL: FETCHING...</span>
+          </div>
         </div>
       </header>
 
@@ -39,6 +42,14 @@
 
           <div class="hud-card controls-card">
             <div class="card-label">⚡ DISPATCH AGENT QUEST</div>
+            <div class="prompt-row">
+              <input
+                id="quest-prompt-input"
+                class="retro-input"
+                type="text"
+                placeholder="Ask your bound AI character anything..."
+              />
+            </div>
             <div class="button-row">
               <button id="btn-scout" class="action-btn">🧭 SCOUT</button>
               <button id="btn-smith" class="action-btn">🔨 SMITH</button>
@@ -46,10 +57,90 @@
               <button id="btn-bard" class="action-btn">🪕 BARD</button>
               <button id="btn-weather-toggle" class="action-btn secondary">🌧️ WEATHER</button>
             </div>
-            <div class="hint-text">SELECT AGENT OR CLICK GROUND TO WALK</div>
+            <div class="guild-log" id="guild-log">READY: CONNECT GEMINI / CHATGPT / CLAUDE IN AI ACCOUNTS</div>
           </div>
         </div>
       </main>
+
+      <!-- 16-Bit AI Account & Character Binding Modal -->
+      <div id="ai-modal" class="retro-modal hidden" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title">
+        <div class="retro-frame modal-panel">
+          <div class="modal-header">
+            <h2 id="ai-modal-title">🔌 AI GUILD ACCOUNTS &amp; BINDINGS</h2>
+            <button id="btn-close-ai-modal" class="action-btn secondary">✕ CLOSE</button>
+          </div>
+          <p class="hint-text">KEYS ARE STORED LOCALLY IN YOUR BROWSER (localStorage) AND SENT DIRECTLY TO EACH PROVIDER.</p>
+
+          <div class="modal-section">
+            <div class="card-label">1. CONNECT PROVIDER ACCOUNTS</div>
+            <div class="provider-grid">
+              <label class="field-label">GEMINI API KEY
+                <input id="key-gemini" class="retro-input" type="password" placeholder="AIza..." />
+              </label>
+              <label class="field-label">MODEL
+                <input id="model-gemini" class="retro-input" type="text" value="gemini-2.5-flash" />
+              </label>
+
+              <label class="field-label">CHATGPT (OPENAI) KEY
+                <input id="key-openai" class="retro-input" type="password" placeholder="sk-..." />
+              </label>
+              <label class="field-label">MODEL
+                <input id="model-openai" class="retro-input" type="text" value="gpt-4o-mini" />
+              </label>
+
+              <label class="field-label">CLAUDE (ANTHROPIC) KEY
+                <input id="key-anthropic" class="retro-input" type="password" placeholder="sk-ant-..." />
+              </label>
+              <label class="field-label">MODEL
+                <input id="model-anthropic" class="retro-input" type="text" value="claude-3-5-haiku-latest" />
+              </label>
+            </div>
+          </div>
+
+          <div class="modal-section">
+            <div class="card-label">2. BIND CHARACTERS TO AI PROVIDERS</div>
+            <div class="binding-grid">
+              <label class="field-label">🧭 ROWAN (SCOUT)
+                <select id="bind-scout" class="retro-select">
+                  <option value="gemini">GEMINI</option>
+                  <option value="openai">CHATGPT (OPENAI)</option>
+                  <option value="anthropic">CLAUDE (ANTHROPIC)</option>
+                  <option value="local">LOCAL SIM</option>
+                </select>
+              </label>
+              <label class="field-label">🔨 BRANN (BLACKSMITH)
+                <select id="bind-blacksmith" class="retro-select">
+                  <option value="gemini">GEMINI</option>
+                  <option value="openai">CHATGPT (OPENAI)</option>
+                  <option value="anthropic">CLAUDE (ANTHROPIC)</option>
+                  <option value="local">LOCAL SIM</option>
+                </select>
+              </label>
+              <label class="field-label">📜 ELOWEN (SCRIBE)
+                <select id="bind-scribe" class="retro-select">
+                  <option value="gemini">GEMINI</option>
+                  <option value="openai">CHATGPT (OPENAI)</option>
+                  <option value="anthropic">CLAUDE (ANTHROPIC)</option>
+                  <option value="local">LOCAL SIM</option>
+                </select>
+              </label>
+              <label class="field-label">🪕 LYRIC (BARD)
+                <select id="bind-bard" class="retro-select">
+                  <option value="gemini">GEMINI</option>
+                  <option value="openai">CHATGPT (OPENAI)</option>
+                  <option value="anthropic">CLAUDE (ANTHROPIC)</option>
+                  <option value="local">LOCAL SIM</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button id="btn-clear-ai" class="action-btn secondary">🗑️ CLEAR KEYS</button>
+            <button id="btn-save-ai" class="action-btn">💾 SAVE CONNECTIONS</button>
+          </div>
+        </div>
+      </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
