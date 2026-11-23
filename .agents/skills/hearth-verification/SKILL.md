@@ -20,19 +20,19 @@ description: Run Hearth's full pre-PR verification and 16-bit/architecture compl
 
 2. **Check for prohibited TypeScript `any` escapes (Rule 5):**
    ```bash
-   rg -n ":\s*any\b|as\s+any\b" src/
+   grep -rnE ":\s*any\b|as\s+any\b" src/
    ```
    - **Expected result:** Zero matches (exit code 1).
 
 3. **Check for direct network I/O in simulation or renderers (Rule 2):**
    ```bash
-   rg -n "\bfetch\s*\(|new\s+WebSocket" src/architecture/WorldState.ts src/render/
+   grep -rnE "\bfetch\s*\(|new\s+WebSocket" src/architecture/WorldState.ts src/render/
    ```
    - **Expected result:** Zero matches (exit code 1).
 
 4. **Check 16-bit styling compliance in `src/style.css` (Rule 4):**
    ```bash
-   rg -n "backdrop-filter|filter:\s*blur|box-shadow:.*blur" src/style.css
+   grep -rnE "backdrop-filter|filter:\s*blur|box-shadow:.*blur" src/style.css
    ```
    - **Expected result:** Zero matches (exit code 1), and `image-rendering: pixelated` is present for canvas elements.
 
