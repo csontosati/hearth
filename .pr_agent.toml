@@ -1,18 +1,18 @@
 # Qodo (PR-Agent) Configuration for Hearth
-# Configures automated code review, PR descriptions, and quality gate inspection.
+# Customized on Day 11 to align review feedback with Hearth's product decisions and AGENTS.md standards.
 
 [pr_reviewer]
-# Require score and focus on architectural and canvas integrity
 require_score_review = true
 require_tests_review = true
+require_focused_review = true
 enable_help_text = false
 extra_instructions = """
-In Hearth, enforce the review standards defined in AGENTS.md:
-1. Rule 1 (The No Invisible Feathers Rule): In ASCII sprite definitions (src/render/pixel/**), ensure every row is exactly 16 characters wide and all glyphs exist in the character's palette dictionary.
-2. Rule 2 (The Clean Sanctuary Loop Rule): Ensure WorldState and renderers never perform direct network fetch/async calls; all I/O belongs in decoupled providers.
-3. Rule 3 (The No Ghost Callbacks Rule): Verify that timers, event listeners, and particle arrays have explicit lifecycle teardown (disconnect/destroy).
-4. Rule 4 (The 16-Bit Atmosphere Rule): Reject modern smooth web styles; enforce CSS theme tokens, pixelated fonts, and pixel-rendering.
-5. Rule 5 (The Forge Verification Gate): Require zero TypeScript 'any' escapes and verify all state transitions have matching Vitest unit tests.
+In Hearth, enforce the review standards and product decisions defined in AGENTS.md:
+1. Rule 1 (No Invisible Feathers): In ASCII sprite definitions (src/render/pixel/**), ensure every row is 16 chars wide, 21 rows tall, and every non-period glyph maps to a valid non-empty hex color (#RGB, #RRGGBB, #RRGGBBAA).
+2. Rule 2 (Clean Sanctuary Loop & Offline-First): WorldState and renderers must remain synchronous and never invoke fetch() or async network calls. WeatherService must always preserve its graceful offline fallback when Open-Meteo is unreachable or times out.
+3. Rule 3 (No Ghost Callbacks): Verify that setTimeout, setInterval, requestAnimationFrame, and event listeners have explicit disconnect()/destroy() cleanup that cancels timer handles and checks active task IDs.
+4. Rule 4 (16-Bit Atmosphere): Reject modern smooth web styles (backdrop-filter, blur, smooth drop shadows, border-radius > 4px, off-token hex colors); enforce CSS theme tokens (--parchment, --wood-dark, --gold-trim) and pixel-rendering.
+5. Rule 5 (Forge Verification Gate): Reject TypeScript 'any' escapes and require Vitest unit tests for domain state, weather math, and sprite changes.
 """
 
 [pr_description]
@@ -22,8 +22,11 @@ final_update_message = true
 [pr_code_suggestions]
 num_code_suggestions_per_chunk = 3
 rank_suggestions = true
+commitable_code_suggestions = true
+extra_instructions = """
+Prioritize suggestions that catch silent pixel-rendering bugs, uncleaned timers/listeners, offline-fallback regressions, or modern CSS leaks. Avoid generic style nitpicks that conflict with 16-bit pixel-art conventions.
+"""
 
 [config]
 model = "gpt-4o"
 fallback_models = ["claude-3-5-sonnet", "gemini-1.5-pro"]
-
