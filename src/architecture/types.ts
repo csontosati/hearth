@@ -43,11 +43,21 @@ export interface WeatherCondition {
   ambientTint: string; // e.g., 'rgba(255, 230, 180, 0.15)' for sunny, 'rgba(40, 60, 90, 0.4)' for rain/night
 }
 
+export type AiProviderId = 'gemini' | 'openai' | 'anthropic' | 'local';
+
+export interface AiProviderConfig {
+  providerId: AiProviderId;
+  apiKey: string;
+  model: string;
+}
+
+export type CharacterProviderBindings = Record<AgentRole, AiProviderId>;
+
 export interface AgentTaskRequest {
   taskId: string;
   role: AgentRole;
   prompt: string;
-  sourceProvider: 'openai' | 'antigravity' | 'cursor' | 'local';
+  sourceProvider: AiProviderId | 'antigravity' | 'cursor';
 }
 
 export interface AgentEvent {
