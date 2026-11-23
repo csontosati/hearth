@@ -60,4 +60,26 @@ describe('WeatherService WMO mapping and ambient tints', () => {
     expect(result.temperatureC).toBe(19);
     expect(result.ambientTint).toMatch(/^rgba\(\d+,\s*\d+,\s*\d+,\s*[\d.]+\)$/);
   });
+
+  it('uses browser geolocation when available and falls back on error', async () => {
+    vi.stubGlobal('navigator', {
+      geolocation: {
+        getCurrentPosition: (success: (pos: { coords: { latitude: number; longitude: number } }) => void) => {
+          success({ coords: { latitude: 47.49, longitude: 19.04 } });
+        },
+      },
+    });
+
+    const resolved = await WeatherService.resolveCoordinates();
+    expect(resolved).toEqual({ latitude: 47.49, longitude: 19.04 });
+
+    vi.stubGlobal('navigator', {
+      geolocation: {
+        getCurrentPosition: (_success: unknown, error: () => void) => error(),
+      },
+    });
+
+    const fallback = await WeatherService.resolveCoordinates(50.08, 14.43);
+    expect(fallback).toEqual({ latitude: 50.08, longitude: 14.43 });
+  });
 });
