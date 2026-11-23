@@ -41,9 +41,59 @@ export class WeatherService implements IWeatherProvider {
     return 'cloudy';
   }
 
-  public async fetchCurrentWeather(latitude = 50.08, longitude = 14.43): Promise<WeatherCondition> {
+  /**
+   * Resolves browser geolocation coordinates with a bounded timeout,
+   * falling back to the provided defaults when unavailable or denied.
+   */
+  public static resolveCoordinates(
+    fallbackLat = 50.08,
+    fallbackLon = 14.43,
+    timeoutMs = 3000
+  ): Promise<{ latitude: number; longitude: number }> {
+    const geo = typeof navigator !== 'undefined' ? navigator.geolocation : undefined;
+    if (!geo || typeof geo.getCurrentPosition !== 'function') {
+      return Promise.resolve({ latitude: fallbackLat, longitude: fallbackLon });
+    }
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const timer = setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          resolve({ latitude: fallbackLat, longitude: fallbackLon });
+        }
+      }, timeoutMs);
+
+      geo.getCurrentPosition(
+        (pos) => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timer);
+            resolve({
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+            });
+          }
+        },
+        () => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timer);
+            resolve({ latitude: fallbackLat, longitude: fallbackLon });
+          }
+        },
+        { timeout: timeoutMs, maximumAge: 300_000 }
+      );
+    });
+  }
+
+  public async fetchCurrentWeather(latitude?: number, longitude?: number): Promise<WeatherCondition> {
     try {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,is_day,weather_code,cloud_cover,wind_speed_10m`;
+      const coords =
+        latitude !== undefined && longitude !== undefined
+          ? { latitude, longitude }
+          : await WeatherService.resolveCoordinates();
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.latitude}&longitude=${coords.longitude}&current=temperature_2m,is_day,weather_code,cloud_cover,wind_speed_10m`;
       const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
       
       if (!response.ok) {
