@@ -35,9 +35,9 @@ All pull requests and agent edits must pass `npm test` (Vitest unit tests) and `
 ## Five review standards
 
 1. **No invisible glyphs or misaligned sprite rows.**
-   - **Applies to:** `src/render/pixel/**`, `src/render/PixelRenderer.ts`, `src/render/TerrainBaker.ts` and sprite test suites.
-   - **Rule:** Sprites are defined in code as ASCII art matrices so that pixel art remains diffable and reviewable in version control. Every row of every character frame must measure exactly 16 characters wide (`CHARACTER_WIDTH = 16`), every frame must contain exactly 21 rows (`CHARACTER_HEIGHT = 21`), and every character glyph (except the transparency dot `'.'`) must have an explicit hex color mapping in the character's `palette` dictionary. Any addition or alteration of sprites must be accompanied by automated validation tests in `src/architecture/__tests__/sprites.test.ts`.
-   - **Why:** The canvas rasterizer skips unregistered glyphs as transparent pixels without throwing runtime exceptions. An unmapped glyph or missing column silently breaks pixel alignment and causes invisible character features.
+   - **Applies to:** `src/render/pixel/**`, `src/render/PixelRenderer.ts`, `src/render/TerrainBaker.ts` and `src/architecture/__tests__/sprites.test.ts`.
+   - **Rule:** Sprites are defined in code as ASCII art matrices so that pixel art remains diffable and reviewable in version control. Every row of every character frame must measure exactly 16 characters wide (`CHARACTER_WIDTH = 16`), every frame must contain exactly 21 rows (`CHARACTER_HEIGHT = 21`), and every character glyph (except the transparency dot `'.'`) must map to a non-empty, valid hex color (`#RGB`, `#RRGGBB`, or `#RRGGBBAA`) in the character's `palette` dictionary. Sprite validation tests in `src/architecture/__tests__/sprites.test.ts` must assert valid hex color format (never key presence alone) and include negative test cases for invalid/empty palette values.
+   - **Why:** The canvas rasterizer skips unregistered or falsy/invalid palette colors as transparent pixels without throwing runtime exceptions. In PR #3, Qodo flagged that checking key presence alone still allowed empty or malformed color strings to pass CI silently.
 
 2. **Strict decoupling of simulation loop and network I/O.**
    - **Applies to:** `src/architecture/WorldState.ts`, `src/render/**`
