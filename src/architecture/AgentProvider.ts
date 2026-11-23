@@ -3,6 +3,8 @@ import type { AgentEvent, AgentTaskRequest, IAgentProvider } from './types';
 export class LocalBridgeAgentProvider implements IAgentProvider {
   public readonly name: string;
   private listeners: Set<(event: AgentEvent) => void> = new Set();
+  private pendingTimers: Set<ReturnType<typeof setTimeout>> = new Set();
+  private activeTaskIds: Set<string> = new Set();
   private connected = false;
 
   constructor(providerName = 'Antigravity / Local Bridge') {
@@ -16,6 +18,11 @@ export class LocalBridgeAgentProvider implements IAgentProvider {
 
   public async disconnect(): Promise<void> {
     this.connected = false;
+    for (const timer of this.pendingTimers) {
+      clearTimeout(timer);
+    }
+    this.pendingTimers.clear();
+    this.activeTaskIds.clear();
     this.listeners.clear();
   }
 
@@ -41,6 +48,9 @@ export class LocalBridgeAgentProvider implements IAgentProvider {
       throw new Error(`Provider ${this.name} is not connected.`);
     }
 
+    const { taskId } = request;
+    this.activeTaskIds.add(taskId);
+
     // Emit initial task started event
     this.emitEvent({
       eventId: `evt_${Date.now()}_start`,
@@ -51,8 +61,12 @@ export class LocalBridgeAgentProvider implements IAgentProvider {
       timestamp: Date.now(),
     });
 
-    // Simulate agent progress for Day 1 validation
-    setTimeout(() => {
+    // Simulate agent progress with tracked timers and active-task guards
+    const thoughtTimer = setTimeout(() => {
+      this.pendingTimers.delete(thoughtTimer);
+      if (!this.connected || !this.activeTaskIds.has(taskId)) {
+        return;
+      }
       this.emitEvent({
         eventId: `evt_${Date.now()}_thought`,
         agentId: request.role,
@@ -62,8 +76,14 @@ export class LocalBridgeAgentProvider implements IAgentProvider {
         timestamp: Date.now(),
       });
     }, 1500);
+    this.pendingTimers.add(thoughtTimer);
 
-    setTimeout(() => {
+    const completeTimer = setTimeout(() => {
+      this.pendingTimers.delete(completeTimer);
+      if (!this.connected || !this.activeTaskIds.has(taskId)) {
+        return;
+      }
+      this.activeTaskIds.delete(taskId);
       this.emitEvent({
         eventId: `evt_${Date.now()}_complete`,
         agentId: request.role,
@@ -73,6 +93,7 @@ export class LocalBridgeAgentProvider implements IAgentProvider {
         timestamp: Date.now(),
       });
     }, 3500);
+    this.pendingTimers.add(completeTimer);
   }
 }
 
