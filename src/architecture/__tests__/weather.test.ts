@@ -1,8 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WeatherService } from '../WeatherService';
 import type { WeatherType } from '../types';
 
 describe('WeatherService WMO mapping and ambient tints', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
   it.each([
     [0, 'clear'],
     [1, 'clear'],
@@ -33,5 +36,28 @@ describe('WeatherService WMO mapping and ambient tints', () => {
 
     const nightTint = WeatherService.calculateAmbientTint('rain', false);
     expect(nightTint).toBe('rgba(15, 23, 42, 0.65)');
+  });
+
+  it('falls back gracefully to clear defaults when fetch rejects', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network offline')));
+    const service = new WeatherService();
+
+    const result = await service.fetchCurrentWeather();
+    expect(result.type).toBe('clear');
+    expect(result.temperatureC).toBe(19);
+    expect(result.ambientTint).toMatch(/^rgba\(\d+,\s*\d+,\s*\d+,\s*[\d.]+\)$/);
+  });
+
+  it('falls back gracefully to clear defaults when Open-Meteo returns HTTP 503', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: false, statusText: 'Service Unavailable' })
+    );
+    const service = new WeatherService();
+
+    const result = await service.fetchCurrentWeather();
+    expect(result.type).toBe('clear');
+    expect(result.temperatureC).toBe(19);
+    expect(result.ambientTint).toMatch(/^rgba\(\d+,\s*\d+,\s*\d+,\s*[\d.]+\)$/);
   });
 });
